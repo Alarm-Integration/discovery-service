@@ -20,12 +20,9 @@ build:
 deploy:
   stage: deploy
   script:
-    - apk upgrade && apk update
-    - apk add openssh-client
-    - apk add sshpass
-    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER docker pull $DOCKER_HUB_ID/$IMAGE_NAME
-    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER "docker stop $CONTAINER_NAME || true"
-    - sshpass -p "$USER_PASSWORD" ssh -o StrictHostKeyChecking=no $USER_ID@$STAGING_SERVER docker run --rm -d -p $DISCOVERY_PORT:$DISCOVERY_PORT --net $DOCKER_MESH_NETWORK --name $CONTAINER_NAME $DOCKER_HUB_ID/$IMAGE_NAME
+    - docker pull $DOCKER_HUB_ID/$IMAGE_NAME
+    - docker stop $CONTAINER_NAME || true
+    - docker run --rm -d -p $DISCOVERY_PORT:$DISCOVERY_PORT --net $DOCKER_MESH_NETWORK --name $CONTAINER_NAME $DOCKER_HUB_ID/$IMAGE_NAME
   environment:
     name: $ENVIROMENT
     url: $STAGING_SERVER
