@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.4.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'jacoco'
 }
 
 group = 'com.gabia'
@@ -10,6 +11,10 @@ sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
+}
+
+jacoco {
+    toolVersion = "0.8.7"
 }
 
 ext {
@@ -29,4 +34,32 @@ dependencyManagement {
 
 test {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        xml.enabled true
+        csv.enabled true
+        csv.destination file("${buildDir}/jacocoCsv")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+            // includes = []
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.70
+            }
+
+            excludes = []
+        }
+    }
 }
